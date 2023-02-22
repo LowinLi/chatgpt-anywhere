@@ -1,1 +1,4 @@
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://chatgpt-anywhere.streamlit.app/)
+## link
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://chatgptanywhere.streamlit.app/)
+## demo
+![](./gif/demo.gif)
