@@ -1,8 +1,5 @@
 import streamlit as st
-import requests
 from streamlit_tags import st_tags
-import random
-import copy
 import openai
 
 

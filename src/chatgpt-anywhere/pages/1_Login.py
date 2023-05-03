@@ -1,9 +1,7 @@
 import streamlit as st
-import os
 import openai
 
 st.title("Login")
-import streamlit as st
 
 tab1, tab2 = st.tabs(["Login from OpenAI", "Login from Azure OpenAI"])
 st.session_state["logined"] = False
