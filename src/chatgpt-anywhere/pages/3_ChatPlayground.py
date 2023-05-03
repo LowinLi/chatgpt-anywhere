@@ -101,22 +101,34 @@ with c2:
             messages.append({"role": "user", "content": st.session_state["past"][i]})
             messages.append({"role": "assistant", "content": st.session_state["generated"][i]})
         messages.append({"role": "user", "content": user_input})
-        runtime_parameters = {}
+
         running = True
-        runtime_parameters["max_tokens"] = max_tokens
-        runtime_parameters["temperature"] = temperature
-        runtime_parameters["top_p"] = top_p
-        runtime_parameters["stop"] = stop or None
-        runtime_parameters["presence_penalty"] = presence_penalty
-        runtime_parameters["frequency_penalty"] = frequency_penalty
-        runtime_parameters["stream"] = True
+
         if st.session_state["api_type"] == "azure":
-            runtime_parameters["engine"] = st.session_state["model2deployment"][model_option]
+            res = openai.ChatCompletion.create(
+                max_tokens=max_tokens,
+                temperature=temperature,
+                top_p=top_p,
+                stop=stop or None,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
+                stream=True,
+                messages=messages,
+                engine=st.session_state["model2deployment"][model_option],
+            )
         elif st.session_state["api_type"] == "open_ai":
-            runtime_parameters["model"] = model_option
-        runtime_parameters["messages"] = messages
-        print(runtime_parameters)
-        res = openai.ChatCompletion.create(**runtime_parameters)
+            res = openai.ChatCompletion.create(
+                max_tokens=max_tokens,
+                temperature=temperature,
+                top_p=top_p,
+                stop=stop or None,
+                presence_penalty=presence_penalty,
+                frequency_penalty=frequency_penalty,
+                stream=True,
+                messages=messages,
+                model=model_option
+            )
+        
         result = ""
         with st.empty():
             # key = len(st.session_state["generated"])

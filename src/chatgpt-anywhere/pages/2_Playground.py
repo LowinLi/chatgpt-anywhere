@@ -116,7 +116,6 @@ with st.empty():
                 runtime_parameters["model"] = model_option
             if model_option in ["text-davinci-003", "code-davinci-002"]:
                 runtime_parameters["prompt"] = text_prompt
-                print(runtime_parameters)
                 res = openai.Completion.create(**runtime_parameters)
                 result = ""
                 with st.empty():
