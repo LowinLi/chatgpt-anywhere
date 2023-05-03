@@ -118,7 +118,6 @@ with st.empty():
                 with st.empty():
                     for x in res:
                         result += x.choices[0].text
-                        print(result)
                         st.markdown("#### Output:\n" + result)
                 running = False
 
