@@ -1,3 +1,5 @@
 streamlit-tags==1.2.8
 streamlit==1.17.0
 openai==0.26.4
+extra_streamlit_components
+streamlit_chat

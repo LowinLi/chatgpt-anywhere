@@ -21,6 +21,18 @@ if "logined" not in st.session_state.keys() or not st.session_state["logined"]:
     st.error("Please login first")
     st.stop()
 
+if st.session_state["api_type"] == "open_ai":
+    models = ["text-davinci-003", "gpt-3.5-turbo", "gpt-4", "gpt-4-32k", "code-davinci-002"]
+    models = [model for model in models if model in st.session_state["model_list"]]
+
+if st.session_state["api_type"] == "azure":
+    models = ["text-davinci-003", "gpt-35-turbo", "gpt-4", "gpt-4-32k", "code-davinci-002"]
+    models = [
+        model
+        for model in models
+        if model in st.session_state["model2deployment"].keys()
+    ]
+
 
 with st.empty():
     with st.form(key="my_form"):
@@ -28,6 +40,7 @@ with st.empty():
         with c1:
             st.subheader("configuration", anchor=None)
             # tts_option = st.checkbox("是否开启自动TTS朗读", value=False)
+            model_option = st.selectbox("Select Model", models)
             max_tokens = st.slider(
                 "max words",
                 min_value=5,
@@ -79,35 +92,50 @@ with st.empty():
                 disabled=False,
                 height=500,
                 max_chars=4000,
-                label_visibility="hidden"
-                
+                label_visibility="hidden",
             )
-            running=False
+            running = False
             submitted = st.form_submit_button("Submit", disabled=running)
 
             if not submitted:
                 st.stop()
             if stop == []:
                 stop = None
-            running=True
-            res = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=text_prompt,
-                max_tokens=max_tokens,
-                temperature=temperature,
-                presence_penalty=presence_penalty,
-                frequency_penalty=frequency_penalty,
-                stop=stop,
-                top_p=top_p,
-                stream=True
-            )
-            result = ""
-            with st.empty():
-                for x in res:
-                    result += x.choices[0].text
-                    st.markdown("#### Output:\n"+result)
-            running=False
-                
-                    
-            
-            
+            running = True
+            runtime_parameters["max_tokens"] = max_tokens
+            runtime_parameters["temperature"] = temperature
+            runtime_parameters["top_p"] = top_p
+            runtime_parameters["stop"] = stop
+            runtime_parameters["presence_penalty"] = presence_penalty
+            runtime_parameters["frequency_penalty"] = frequency_penalty
+            runtime_parameters["stream"] = True
+
+            if st.session_state["api_type"] == "azure":
+                runtime_parameters["engine"] = st.session_state["model2deployment"][model_option]
+            elif st.session_state["api_type"] == "open_ai":
+                runtime_parameters["model"] = model_option
+            if model_option in ["text-davinci-003", "code-davinci-002"]:
+                runtime_parameters["prompt"] = text_prompt
+                res = openai.Completion.create(**runtime_parameters)
+                result = ""
+                with st.empty():
+                    for x in res:
+                        result += x.choices[0].text
+                        st.markdown("#### Output:\n" + result)
+                running = False
+
+            else:
+                messages = [
+                    {"role": "system", "content": ""}, 
+                    {"role": "user", "content": text_prompt},
+                ]
+                runtime_parameters["messages"] = messages
+                res = openai.ChatCompletion.create(**runtime_parameters)
+                result = ""
+                with st.empty():
+                    for x in res:
+                        if "content" in x.choices[0].delta.keys():
+                            result += x.choices[0].delta.content
+                        st.markdown("#### Output:\n" + result)
+                running = False
+
