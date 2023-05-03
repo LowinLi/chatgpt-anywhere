@@ -93,13 +93,8 @@ with c1:
     )
 with c2:
     st.subheader("Chat", anchor=None)
-
-    def get_text():
-        input_text = st.text_input("Input and Enter","", key="input")
-        return input_text 
-
-    user_input = get_text()
-
+    running = False
+    user_input = st.text_input("Input and Enter","", key="input", disabled=running)
     if user_input:
         messages = [{"role": "system", "content": background_prompt}]
         for i in range(len(st.session_state["generated"])):

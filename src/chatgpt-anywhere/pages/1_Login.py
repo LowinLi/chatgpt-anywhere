@@ -38,7 +38,7 @@ if api_submit:
     st.session_state["api_type"] = "open_ai"
     st.session_state["api_key"] = api_key
     st.session_state["api_base"] = "https://api.openai.com/v1"
-    st.session_state["api_version"] = None
+    st.session_state["api_version"] = "2020-11-07"
 
     openai.api_key = st.session_state["api_key"]
     openai.api_base = st.session_state["api_base"]
